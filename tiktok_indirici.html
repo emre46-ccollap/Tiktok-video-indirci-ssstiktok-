@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Video İndirici</title>
+
+<style>
+body{
+    margin:0;
+    font-family: system-ui, sans-serif;
+    background:#0b0f14;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.container{
+    width:100%;
+    max-width:400px;
+    padding:20px;
+    text-align:center;
+}
+h1{
+    margin-bottom:15px;
+    font-size:22px;
+}
+input{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:none;
+    outline:none;
+    font-size:14px;
+    margin-bottom:10px;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#1e90ff;
+    border:none;
+    border-radius:8px;
+    color:white;
+    font-size:15px;
+    cursor:pointer;
+}
+button:disabled{
+    opacity:0.6;
+}
+.result{
+    margin-top:15px;
+}
+a{
+    display:block;
+    margin-top:10px;
+    padding:10px;
+    background:#00c853;
+    color:#000;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+.loader{
+    margin-top:10px;
+    font-size:13px;
+    opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🎵 TikTok Video İndirici</h1>
+    <input id="link" type="text" placeholder="TikTok video linkini yapıştır">
+    <button onclick="indir()">İndir</button>
+    <div class="loader" id="loader"></div>
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+async function indir(){
+    const link = document.getElementById("link").value.trim();
+    const result = document.getElementById("result");
+    const loader = document.getElementById("loader");
+    result.innerHTML = "";
+    
+    if(!link.includes("tiktok.com")){
+        alert("Geçerli TikTok linki gir");
+        return;
+    }
+
+    loader.innerText = "Video alınıyor...";
+
+    try{
+        // API Proxy
+        const api = "https://api.tiklydown.me/api/download?url=" + encodeURIComponent(link);
+
+        const res = await fetch(api);
+        const data = await res.json();
+
+        loader.innerText = "";
+
+        if(data.video && data.video.noWatermark){
+            result.innerHTML = `
+                <a href="${data.video.noWatermark}" download>📥 Filigransız İndir</a>
+                <a href="${data.video.watermark}" download>📥 Filigranlı İndir</a>
+                <a href="${data.music}" download>🎧 Sadece Ses (MP3)</a>
+            `;
+        }else{
+            result.innerHTML = "❌ Video alınamadı";
+        }
+
+    }catch(e){
+        loader.innerText = "";
+        result.innerHTML = "❌ Hata oluştu";
+    }
+}
+</script>
+
+</body>
+</html>
